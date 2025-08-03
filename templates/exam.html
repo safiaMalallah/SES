@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Exam</title></head>
+<body>
+<h2>Student Exam</h2>
+<form method="post">
+  {% for q in questions %}
+    <p><strong>{{ q.text }}</strong></p>
+    {% for opt in q.options %}
+      <input type="radio" name="{{ q.id }}" value="{{ opt }}" required> {{ opt }}<br>
+    {% endfor %}
+  {% endfor %}
+  <input type="submit" value="Submit">
+</form>
+</body>
+</html>

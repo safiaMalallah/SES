@@ -1,15 +1,21 @@
 from flask import Flask, render_template, request, redirect, session
-import json
-import random
+import firebase_admin
+from firebase_admin import credentials, firestore
 from werkzeug.security import check_password_hash, generate_password_hash
+import random
 
 app = Flask(__name__)
 app.secret_key = 'super-secret'
 
-# Dummy users (in real app, use a database)
+# Dummy users (replace with real user DB if needed)
 users = {
     "student1": generate_password_hash("pass123")
 }
+
+# Initialize Firebase Admin SDK
+cred = credentials.Certificate("firebase_key.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -22,25 +28,29 @@ def login():
         return render_template('login.html', error="Invalid login")
     return render_template('login.html')
 
-@app.route('/exam', methods=['GET', 'POST'])
+@app.route("/exam", methods=["GET", "POST"])
 def exam():
     if 'user' not in session:
         return redirect('/')
-    with open('data/question_bank.json') as f:
-        all_questions = json.load(f)
-    questions = random.sample(all_questions, min(5, len(all_questions)))  # Pick 5 random questions
-    if request.method == 'POST':
+
+    questions_ref = db.collection("question_bank").stream()
+    all_questions = [q.to_dict() for q in questions_ref]
+    selected_questions = random.sample(all_questions, min(5, len(all_questions)))
+
+    if request.method == "POST":
         score = 0
-        for q in questions:
-            if request.form.get(q['id']) == q['answer']:
+        for q in selected_questions:
+            user_answer = request.form.get(q['id'])
+            if user_answer == q['answer']:
                 score += 1
-        return render_template('result.html', score=score, total=len(questions))
-    return render_template('exam.html', questions=questions)
+        return render_template("result.html", score=score, total=len(selected_questions))
+
+    return render_template("exam.html", questions=selected_questions)
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/')
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
