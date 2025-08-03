@@ -1,0 +1,57 @@
+[
+  {
+    "id": "q1",
+    "question": "What is 2 + 2?",
+    "options": [
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "answer": "4"
+  },
+  {
+    "id": "q2",
+    "question": "What is the capital of France?",
+    "options": [
+      "Berlin",
+      "Madrid",
+      "Paris",
+      "Rome"
+    ],
+    "answer": "Paris"
+  },
+  {
+    "id": "q3",
+    "question": "Which language is used for web development?",
+    "options": [
+      "Python",
+      "HTML",
+      "Java",
+      "C++"
+    ],
+    "answer": "HTML"
+  },
+  {
+    "id": "q4",
+    "question": "Which planet is known as the Red Planet?",
+    "options": [
+      "Earth",
+      "Mars",
+      "Jupiter",
+      "Venus"
+    ],
+    "answer": "Mars"
+  },
+  {
+    "id": "q5",
+    "question": "Which ocean is the largest?",
+    "options": [
+      "Atlantic",
+      "Indian",
+      "Pacific",
+      "Arctic"
+    ],
+    "answer": "Pacific"
+  }
+]
