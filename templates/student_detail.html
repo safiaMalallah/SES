@@ -1,0 +1,43 @@
+<!-- templates/student_detail.html -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>تفاصيل الطالب</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f2f5f7; direction: rtl; }
+        table { width: 90%; margin: 2rem auto; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+        th { background-color: #ddd; }
+        h1 { text-align: center; margin-top: 2rem; }
+        a { display: block; text-align: center; margin-top: 20px; color: blue; text-decoration: none; }
+        .correct { color: green; font-weight: bold; }
+        .wrong { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>تفاصيل إجابات الطالب: {{ student_name }}</h1>
+
+    <table border="1">
+    <tr>
+        <th>رقم السؤال</th>
+        <th>السؤال</th>
+        <th>إجابة الطالب</th>
+        <th>الإجابة الصحيحة</th>
+        <th>الحالة</th>
+    </tr>
+    {% for ans in answers %}
+    <tr>
+        <td>{{ ans.qid }}</td>
+        <td>{{ ans.question }}</td>
+        <td>{{ ans.choices[ans.student_answer ~ '_ar'] }}</td>
+        <td>{{ ans.choices[ans.correct_answer ~ '_ar'] }}</td>
+        <td>{{ "✔️" if ans.is_correct else "❌" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+    <a href="/admin">🔙 العودة إلى لوحة التحكم</a>
+</body>
+</html>

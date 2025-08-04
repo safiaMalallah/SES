@@ -1,0 +1,38 @@
+[
+  {
+    "id": "q1",
+    "category": "easy",
+    "question_en": "What is 2 + 2?",
+    "question_ar": "ما هو ٢ + ٢؟",
+    "answers": [
+      {"id": "a", "text_en": "3", "text_ar": "٣"},
+      {"id": "b", "text_en": "4", "text_ar": "٤"},
+      {"id": "c", "text_en": "5", "text_ar": "٥"}
+    ],
+    "correct_answer": "b"
+  },
+  {
+    "id": "q2",
+    "category": "medium",
+    "question_en": "What is the capital of France?",
+    "question_ar": "ما هي عاصمة فرنسا؟",
+    "answers": [
+      {"id": "a", "text_en": "Paris", "text_ar": "باريس"},
+      {"id": "b", "text_en": "Rome", "text_ar": "روما"},
+      {"id": "c", "text_en": "London", "text_ar": "لندن"}
+    ],
+    "correct_answer": "a"
+  },
+  {
+    "id": "q3",
+    "category": "hard",
+    "question_en": "Which element has the chemical symbol 'Fe'?",
+    "question_ar": "ما العنصر الذي له الرمز الكيميائي 'Fe'؟",
+    "answers": [
+      {"id": "a", "text_en": "Iron", "text_ar": "الحديد"},
+      {"id": "b", "text_en": "Silver", "text_ar": "الفضة"},
+      {"id": "c", "text_en": "Gold", "text_ar": "الذهب"}
+    ],
+    "correct_answer": "a"
+  }
+]

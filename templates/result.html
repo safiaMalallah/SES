@@ -1,8 +1,46 @@
 <!DOCTYPE html>
-<html>
-<head><title>Result</title></head>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تم إرسال الاختبار</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="10;url=/logout"> <!-- ✅ Auto redirect in 10 seconds -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            text-align: center;
+            padding: 50px;
+        }
+        .thank-you-box {
+            background-color: #f0fff0;
+            border: 1px solid #90ee90;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #006400;
+        }
+        p {
+            font-size: 1.2em;
+            color: #333;
+        }
+        .small-note {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
+</head>
 <body>
-<h2>Exam Completed</h2>
-<p>You scored {{ score }} out of {{ total }}</p>
+    <div class="thank-you-box">
+        <h2>🎉 تم تقديم الاختبار بنجاح!</h2>
+        <p>✅ شكراً لإكمالك الاختبار. بالتوفيق! سنتواصل معك لاحقاً عبر المنصة.</p>
+        <p>📬 سيتم إرسال نتائجك من خلال المنصة لاحقاً.</p>
+        <div class="small-note">سيتم تسجيل الخروج تلقائيًا خلال 10 ثوانٍ...</div>
+    </div>
 </body>
 </html>

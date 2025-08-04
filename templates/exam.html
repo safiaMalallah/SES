@@ -1,16 +1,299 @@
 <!DOCTYPE html>
-<html>
-<head><title>Exam</title></head>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>الاختبار</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .timer {
+            text-align: center;
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            font-size: 1.2em;
+        }
+        .warning-area {
+            margin: 20px auto;
+            padding: 10px;
+            max-width: 700px;
+            background-color: #fffbe6;
+            border: 1px solid #ffd966;
+            border-radius: 6px;
+            color: #cc0000;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+        .warning-area.blink {
+            animation: blink 1s step-start infinite;
+        }
+        @keyframes blink {
+            50% { background-color: #fff2cc; }
+        }
+        #instruction {
+            display: none;
+            background-color: #fff7e6;
+            border: 1px solid #e6c200;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 700px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        #examTitle {
+            display: none;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .question-box {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 10px auto;
+            max-width: 700px;
+        }
+        .question-box.active {
+            display: block;
+        }
+        .nav-buttons, .submit-btn {
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button.disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        #questionNav {
+            display: none;
+            margin: 20px auto;
+            text-align: center;
+            max-width: 800px;
+        }
+        #questionNav span {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 12px;
+            border-radius: 50%;
+            background-color: #eee;
+            cursor: pointer;
+        }
+        #questionNav span.answered {
+            background-color: #c8e6c9;
+        }
+        #questionNav span.unanswered {
+            border: 2px solid red;
+        }
+        #questionNav span.active {
+            font-weight: bold;
+            border: 2px solid black;
+        }
+    </style>
+</head>
 <body>
-<h2>Student Exam</h2>
-<form method="post">
-  {% for q in questions %}
-    <p><strong>{{ q.text }}</strong></p>
-    {% for opt in q.options %}
-      <input type="radio" name="{{ q.id }}" value="{{ opt }}" required> {{ opt }}<br>
+
+<div class="timer" id="timer">الوقت المتبقي: --:--</div>
+
+
+<div id="honorModal">
+    <div style="background: white; max-width: 600px; margin: 40px auto; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: center;">
+        <p>
+            أتعهد بشرفي كطالب أن أؤدي هذا الاختبار بنزاهة، دون غش أو مساعدة خارجية. أفهم أنني مسؤول عن أفعالي، وأن أي مخالفة لأخلاقيات الاختبار قد تعرضني للعقوبات الأكاديمية.
+        </p>
+        <button onclick="startHonor()">✅ أوافق وأبدأ</button>
+    </div>
+</div>
+
+<div id="instruction">
+    عزيزي الطالب، يحتوي هذا الاختبار على مجموعة من الأسئلة متعددة الخيارات. لكل سؤال أربعة خيارات، ويُطلب منك اختيار إجابة واحدة فقط. سيتم حفظ إجابتك تلقائيًا بمجرد اختيارك لأي خيار. يمكنك التنقل بين الأسئلة باستخدام زر "التالي" أو "السابق". لا يمكن إرسال الاختبار إلا بعد الإجابة على جميع الأسئلة. يوجد مؤقت يوضح الوقت المتبقي. عند انتهاء الوقت، تُرسل الإجابات تلقائيًا. التزم بالإجابات بأمانة أكاديمية.
+<div id="samplePreview" style="background-color: #fdfce5; border: 1px solid #ddd24d; padding: 20px; margin: 20px auto; max-width: 700px; border-radius: 6px;">
+    <h3 style="text-align: center;">🔍 مثال توضيحي على سؤال الاختبار</h3>
+    <div style="background-color: #ffffff; border: 1px solid #ccc; padding: 15px; border-radius: 5px; position: relative;">
+        <p><strong>س: هذا سؤال تجريبي فقط للتوضيح</strong></p>
+        <label><input type="radio" disabled> إجابة 1</label><br>
+        <label><input type="radio" disabled> إجابة 2</label><br>
+        <label><input type="radio" disabled> إجابة 3</label><br>
+        <label><input type="radio" disabled> إجابة 4</label><br>
+
+        <div style="margin-top: 15px;">
+            <button disabled style="padding: 8px 16px;">السابق</button>
+            <button disabled style="padding: 8px 16px;">التالي</button>
+            <button disabled style="padding: 8px 16px; background-color: #ccc;">إرسال</button>
+        </div>
+
+        <div style="margin-top: 20px; font-size: 0.95em;">
+            <p>⬆️ هذا هو نموذج السؤال، يحتوي على نص السؤال وأربعة خيارات للإجابة.</p>
+            <p>⬅️ زر <strong>"السابق"</strong> يعود للسؤال السابق.</p>
+            <p>➡️ زر <strong>"التالي"</strong> يذهب للسؤال التالي.</p>
+            <p>✅ بعد الانتهاء من الإجابة على جميع الأسئلة، استخدم زر <strong>"إرسال"</strong> لتقديم الاختبار.</p>
+            <p>⚠️ إذا لم تُجب على كل الأسئلة، سيظهر لك تحذير قبل الإرسال.</p>
+        </div>
+    </div>
+</div>
+</div>
+<div id="warningArea" class="warning-area"></div>
+
+<h2 id="examTitle">الاختبار</h2>
+
+<div id="questionNav"></div>
+
+<form id="examForm" method="post" action="/submit" style="display: none" onsubmit="return confirmIncompleteSubmission();">
+
+    {% for q in questions %}
+        <div class="question-box" id="q{{ loop.index0 }}">
+            <p><strong>سؤال رقم {{ loop.index }}:</strong> {{ q['question_ar'] }}</p>
+            {% set q_idx = loop.index0 %}
+            {% for opt in ['A', 'B', 'C', 'D'] %}
+                <label>
+                    <input type="radio" name="{{ q['id'] }}" value="{{ opt }}"
+                        onchange="markAnswered({{ q_idx }})">
+                    {{ q['answers'][opt + '_ar'] }}
+                </label><br>
+            {% endfor %}
+        </div>
     {% endfor %}
-  {% endfor %}
-  <input type="submit" value="Submit">
+
+    <div class="nav-buttons">
+        <button type="button" id="prevBtn" class="disabled" onclick="prevQuestion()" disabled>السابق</button>
+        <button type="button" id="nextBtn" class="disabled" onclick="nextQuestion()" disabled>التالي</button>
+    </div>
+
+    <div class="submit-btn">
+        <button type="submit" id="submitBtn" class="disabled" disabled>إرسال</button>
+    </div>
 </form>
+
+<script>
+    const totalQuestions = {{ questions|length }};
+    let currentQuestion = 0;
+    const answered = Array(totalQuestions).fill(false);
+    let timeLeft = 61 * 60;
+    let warned = {};
+
+    function startHonor() {
+        document.getElementById("honorModal").style.display = "none";
+        document.getElementById("instruction").style.display = "block";
+        updateTimer();
+    }
+
+    function showWarning(msg, blink) {
+        const warning = document.getElementById("warningArea");
+        warning.innerText = msg;
+        warning.style.display = "block";
+        warning.classList.toggle("blink", blink);
+    }
+
+    function showQuestion(i) {
+        document.querySelectorAll(".question-box").forEach((box, index) => {
+            box.classList.toggle("active", index === i);
+        });
+        currentQuestion = i;
+        updateNavStatus();
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < totalQuestions - 1) showQuestion(currentQuestion + 1);
+    }
+
+    function markAnswered(index) {
+        answered[index] = true;
+        updateNavStatus();
+    }
+
+    function updateNavStatus() {
+        document.querySelectorAll("#questionNav span").forEach((el, i) => {
+            el.className = answered[i] ? 'answered' : 'unanswered';
+            if (i === currentQuestion) el.classList.add('active');
+        });
+    }
+
+    function buildQuestionNav() {
+        const container = document.getElementById("questionNav");
+        container.innerHTML = "";
+        for (let i = 0; i < totalQuestions; i++) {
+            const span = document.createElement("span");
+            span.textContent = i + 1;
+            span.onclick = () => showQuestion(i);
+            span.className = "unanswered";
+            container.appendChild(span);
+        }
+        container.style.display = "block";
+    }
+
+    function enableButtons() {
+        document.getElementById("prevBtn").disabled = false;
+        document.getElementById("nextBtn").disabled = false;
+        document.getElementById("submitBtn").disabled = false;
+
+        document.getElementById("prevBtn").classList.remove("disabled");
+        document.getElementById("nextBtn").classList.remove("disabled");
+        document.getElementById("submitBtn").classList.remove("disabled");
+
+        document.getElementById("instruction").style.display = "none";
+        document.getElementById("examForm").style.display = "block";
+        document.getElementById("examTitle").style.display = "block";
+
+        buildQuestionNav();
+        showQuestion(0);
+    }
+
+    function updateTimer() {
+        const timerDiv = document.getElementById("timer");
+        const min = Math.floor(timeLeft / 60);
+        const sec = (timeLeft % 60).toString().padStart(2, '0');
+        timerDiv.textContent = `الوقت المتبقي: ${min}:${sec}`;
+
+        const messages = {
+            3660: ["⌛ تبقى دقيقة واحدة حتى بدء العد التنازلي الرسمي. تأكد من جاهزيتك!", true],
+            3600: ["⌛ تم بدء العد التنازلي الآن. بالتوفيق!", false],
+            1830: ["⏳ مضى نصف الوقت.", true],
+            900: ["⚠️ تبقى 15 دقيقة فقط.", true],
+            300: ["⚠️ تبقى 5 دقائق. تأكد من إجابتك على جميع الأسئلة.", true],
+            60: ["⚠️ دقيقة واحدة متبقية. سيتم حفظ الاختبار تلقائيًا.", true],
+            0: ["⛔ انتهى الوقت! سيتم إرسال إجاباتك الآن.", true]
+        };
+
+        if (messages[timeLeft] && !warned[timeLeft]) {
+            showWarning(...messages[timeLeft]);
+            warned[timeLeft] = true;
+            if (timeLeft === 3600) enableButtons();
+            if (timeLeft === 0) document.getElementById("examForm").submit();
+        }
+
+        timeLeft--;
+        setTimeout(updateTimer, 1000);
+    }
+	function confirmIncompleteSubmission() {
+    const allAnswered = answered.every(val => val === true);
+    if (!allAnswered && timeLeft > 0) {
+        return confirm("⚠️ لم تُجب على جميع الأسئلة. هل أنت متأكد أنك تريد إرسال الاختبار الآن؟");
+    }
+    return true; // allow submit
+}
+
+</script>
 </body>
 </html>
