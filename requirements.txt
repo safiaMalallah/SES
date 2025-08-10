@@ -2,3 +2,4 @@ Flask
 firebase-admin
 werkzeug
 fpdf
+xlsxwriter
